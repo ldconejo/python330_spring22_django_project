@@ -8,7 +8,7 @@ from blogging.models import Post, Category
 # Rewritten to utilize custom ModelAdmin class
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    exclude = ('posts',)
+    exclude = ("posts",)
 
 
 class CategoryInline(admin.TabularInline):

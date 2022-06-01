@@ -10,7 +10,9 @@ from blogging.models import Post
 
 # Create your tests here.
 class PostTestCase(TestCase):
-    fixtures = ['blogging_test_fixture.json', ]
+    fixtures = [
+        "blogging_test_fixture.json",
+    ]
 
     def setUp(self):
         self.user = User.objects.get(pk=1)
@@ -21,24 +23,23 @@ class PostTestCase(TestCase):
         actual = str(p1)
         self.assertEqual(expected, actual)
 
+
 class FrontEndTestCase(TestCase):
-    fixtures = ['blogging_test_fixture.json']
+    fixtures = ["blogging_test_fixture.json"]
 
     def setUp(self):
         self.now = datetime.utcnow().replace(tzinfo=utc)
         self.timedelta = timedelta(15)
         author = User.objects.get(pk=1)
-        for count in range(1,11):
-            post = Post(title="Post %d Title" % count,
-                        text="foo",
-                        author=author)
+        for count in range(1, 11):
+            post = Post(title="Post %d Title" % count, text="foo", author=author)
             if count < 6:
                 pubdate = self.now - self.timedelta * count
                 post.published_date = pubdate
             post.save()
 
     def test_list_only_published(self):
-        resp = self.client.get('/')
+        resp = self.client.get("/")
         resp_text = resp.content.decode(resp.charset)
         self.assertTrue("Latest Posts" in resp_text)
         for count in range(1, 11):
@@ -52,10 +53,9 @@ class FrontEndTestCase(TestCase):
         for count in range(1, 11):
             title = "Post %d Title" % count
             post = Post.objects.get(title=title)
-            resp = self.client.get('/posts/%d' % post.pk)
+            resp = self.client.get("/posts/%d" % post.pk)
             if count < 6:
                 self.assertEqual(resp.status_code, 200)
                 self.assertContains(resp, title)
             else:
                 self.assertEqual(resp.status_code, 404)
-
